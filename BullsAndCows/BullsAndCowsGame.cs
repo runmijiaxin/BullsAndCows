@@ -1,33 +1,41 @@
 ﻿using System;
+using System.Linq;
+using System.Net.Sockets;
 
 namespace BullsAndCows
 {
     public class BullsAndCowsGame
     {
         private readonly SecretGenerator secretGenerator;
-        private string secret;
+        private readonly string secret;
         public BullsAndCowsGame(SecretGenerator secretGenerator)
         {
             this.secretGenerator = secretGenerator;
+            this.secret = this.secretGenerator.GenerateSecret();
         }
 
         public bool CanContinue => true;
 
         public string Guess(string guess)
         {
-            secret = this.secretGenerator.GenerateSecret();
+            var countBull = CountBull(guess);
+            var countCow = CountCow(guess, countBull);
+
+            return $"{countBull}A{countCow}B";
+        }
+
+        private int CountCow(string guess, int countBull)
+        {
             var guessDigits = guess.Split(" ");
             var secretDigits = secret.Split(" ");
-            int countBull = 0;
-            for (var index = 0; index < 4; index++)
-            {
-                if (guessDigits[index] == secretDigits[index])
-                {
-                    countBull++;
-                }
-            }
+            return guessDigits.Count(digit => secretDigits.Contains(digit)) - countBull;
+        }
 
-            return $"{countBull}A0B";
+        private int CountBull(string guess)
+        {
+            var guessDigits = guess.Split(" ");
+            var secretDigits = secret.Split(" ");
+            return guessDigits.Where((t, index) => t == secretDigits[index]).Count();
         }
     }
 }
