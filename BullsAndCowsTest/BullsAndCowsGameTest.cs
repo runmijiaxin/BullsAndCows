@@ -58,5 +58,16 @@ namespace BullsAndCowsTest
             // then
             Assert.Equal("1A1B", guessResult);
         }
+
+        [Fact]
+        public void Should_return_secret_with_4_digits_when_generate_secret()
+        {
+            // given
+            SecretGenerator generator = new SecretGenerator();
+            // when
+            string secret = generator.GenerateSecret();
+            // then
+            Assert.Equal(4, secret.Split(" ").Length);
+        }
     }
 }
