@@ -1,3 +1,4 @@
+using System;
 using BullsAndCows;
 using Moq;
 using Xunit;
@@ -68,6 +69,20 @@ namespace BullsAndCowsTest
             string secret = generator.GenerateSecret();
             // then
             Assert.Equal(4, secret.Split(" ").Length);
+        }
+
+        [Fact]
+        public void Should_return_secret_with_4_random_digits_and_each_digit_is_different_when_generate_secret()
+        {
+            // given
+            var mockRandom = new Mock<Random>();
+            mockRandom.SetupSequence(random => random.Next(It.IsAny<int>()))
+                .Returns(1).Returns(1).Returns(1).Returns(5).Returns(4).Returns(5).Returns(3);
+            SecretGenerator generator = new SecretGenerator(mockRandom.Object);
+            // when
+            string secret = generator.GenerateSecret();
+            // then
+            Assert.Equal("1 5 4 3", secret);
         }
     }
 }
